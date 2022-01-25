@@ -31,17 +31,37 @@ export class Application extends React.Component {
         cockpit.file('/etc/hostname').watch(content => {
             this.setState({ hostname: content.trim() });
         });
+        cockpit.file('/home/yattoz/calvinball-website/podcast_resources.log').watch(content => {
+            this.setState({ log: content });
+        });
+    }
+
+    handleDummy = function() {
+        cockpit.script("echo \"$(date)\" >> /home/yattoz/calvinball-website/podcast_resources.log");
+    }
+
+    handleRunRegenerateScript = function() {
+        const run = `PATH="$PATH:$HOME/.rbenv/bin:$HOME/.rbenv/shims" && cd /home/yattoz/calvinball-website && echo "start" > start.log && git pull 2>&1 > git.log && ruby scripts/podcast_resources.rb 2>&1 > podcast_resources.log`;
+        cockpit.script(run);
     }
 
     render() {
         return (
             <Card>
-                <CardTitle>Starter Kit</CardTitle>
+                <CardTitle>Regénérer le site Calvinballconsortium.fr</CardTitle>
                 <CardBody>
                     <Alert
                         variant="info"
                         title={ cockpit.format(_("Running on $0"), this.state.hostname) }
                     />
+                    <button onClick={this.handleRunRegenerateScript}>
+                        Régénérer le site
+                    </button>
+                    <div>
+                        <pre>
+                            {this.state.log}
+                        </pre>
+                    </div>
                 </CardBody>
             </Card>
         );
