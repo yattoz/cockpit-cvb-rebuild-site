@@ -1,3 +1,32 @@
 p {
     font-weight: bold;
 }
+
+.buttonBox {
+    margin: 1em;
+}
+
+button {
+    margin: 0.4em;
+    // background-color: blue;
+    // color: white;
+}
+
+// button:hover {
+//     // background-color: lightgrey;
+// }
+
+// button:disabled {
+//     background-color: gray;
+//     // color: black;
+// }
+
+pre {
+    border: 1px solid black;
+    padding: 1em;
+    overflow-x: auto;
+    // word-wrap: break-word;
+    // white-space: pre-wrap;
+}
+
+
