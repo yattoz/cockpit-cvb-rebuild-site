@@ -22,6 +22,7 @@ import React from 'react';
 import { Alert, Card, CardTitle, CardBody } from '@patternfly/react-core';
 
 const _ = cockpit.gettext;
+const dbus_client = cockpit.dbus("fr.calvinballconsortium.service", { bus: "system" });
 
 export class Application extends React.Component {
     constructor() {
@@ -36,13 +37,38 @@ export class Application extends React.Component {
         });
     }
 
-    handleDummy = function() {
+    handleDummy = function () {
         cockpit.script("echo \"$(date)\" >> /home/yattoz/calvinball-website/podcast_resources.log");
     }
 
-    handleRunRegenerateScript = function() {
-        const run = `PATH="$PATH:$HOME/.rbenv/bin:$HOME/.rbenv/shims" && cd /home/yattoz/calvinball-website && echo "start" > start.log && git pull 2>&1 > git.log && ruby scripts/podcast_resources.rb 2>&1 > podcast_resources.log`;
-        cockpit.script(run);
+    handleRunRegenerateScript = function () {
+        dbus_client.wait(function() {
+            console.log("client ready!");
+            console.log(dbus_client);
+            dbus_client.call("/fr/calvinballconsortium/runner", "fr.calvinballconsortium.interface", "run", ["regen"]);
+        });
+        // cockpit.script(`dbus-send --system --print-reply --dest="fr.calvinballconsortium.service" /fr/calvinballconsortium/runner "fr.calvinballconsortium.interface.run" string:"regen"`);
+    }
+
+    handleRunRebuildScript = function () {
+        // const run = `PATH="$PATH:/home/yattoz/.rbenv/bin:/home/yattoz/.rbenv/shims" && cd /home/yattoz/calvinball-website && echo "start" > start.log && git pull 2>&1 > git.log && ruby scripts/podcast_resources.rb --rebuild 2>&1 > podcast_resources.log`;
+        // cockpit.script(run);
+        dbus_client.wait(function() {
+            console.log("client ready!");
+            console.log(dbus_client);
+            dbus_client.call("/fr/calvinballconsortium/runner", "fr.calvinballconsortium.interface", "run", ["rebuild"]);
+        });
+    }
+
+    handleRunDevScript = function () {
+        // const run = `PATH="$PATH:/home/yattoz/.rbenv/bin:/home/yattoz/.rbenv/shims" && cd /home/yattoz/calvinball-website && echo "start" > start.log && git pull 2>&1 > git.log && ruby scripts/podcast_resources.rb --dev 2>&1 > podcast_resources.log`;
+        // cockpit.script(run);
+        // cockpit.script(`dbus-send --system --print-reply --dest="fr.calvinballconsortium.service" /fr/calvinballconsortium/runner "fr.calvinballconsortium.interface.hello" string:"$(date)"`);
+        dbus_client.wait(function() {
+            console.log("client ready!");
+            console.log(dbus_client);
+            dbus_client.call("/fr/calvinballconsortium/runner", "fr.calvinballconsortium.interface", "run", ["dev"]);
+        });
     }
 
     render() {
@@ -52,10 +78,16 @@ export class Application extends React.Component {
                 <CardBody>
                     <Alert
                         variant="info"
-                        title={ cockpit.format(_("Running on $0"), this.state.hostname) }
+                        title={cockpit.format(_("Running on $0"), this.state.hostname)}
                     />
                     <button onClick={this.handleRunRegenerateScript}>
                         Régénérer le site
+                    </button>
+                    <button onClick={this.handleRunRebuildScript}>
+                        Reconstruire le site
+                    </button>
+                    <button onClick={this.handleRunDevScript}>
+                        Reconstruire le site de test
                     </button>
                     <div>
                         <pre>
