@@ -48,7 +48,7 @@ export class Application extends React.Component {
             toggleButtons(tag === "-");
         };
         cockpit.file("/home/yattoz/calvinball-website/generation_token/.lock").watch(watch_lock, { read: false });
-        cockpit.file("/home/yattoz/calvinball-website/last_schedule.txt").watch((content, tag) => {
+        cockpit.file("/home/yattoz/calvinball-website/next_schedule.log").watch((content, tag) => {
             // note: running at -l as podcaster doesn't output scheduled jobs for user yattoz. So we read the file instead.
             this.setState({ at_schedule: content });
         });
@@ -222,12 +222,12 @@ export class Application extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <div>
+                    <div className="next-updates">
                         <Alert
                             variant="info"
                             title={cockpit.format(_("Mises à jour du site programmées (heure de Paris)"), this.state.hostname)}
                         >
-                            {this.state.at_schedule}
+                            {this.state.at_schedule === "" ? "Aucune mise à jour prévue" : this.state.at_schedule}
                         </Alert>
                     </div>
                     <div>
