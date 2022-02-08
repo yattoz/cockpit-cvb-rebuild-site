@@ -2,7 +2,7 @@
 <component type="addon">
   <id>fr.calvinballconsortium.cvb-rebuild-site</id>
   <metadata_license>CC0-1.0</metadata_license>
-  <name>Régénérer site</name>
+  <name>Mise à jour du site Calvinballconsortium.fr</name>
   <summary>Régénérer le site de Calvinballconsortium.fr</summary>
   <description>
     <p>
