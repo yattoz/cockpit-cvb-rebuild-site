@@ -37,7 +37,6 @@ export class Application extends React.Component {
     constructor() {
         super();
         this.state = { hostname: _("Unknown") };
-
         cockpit.file('/etc/hostname').watch(content => {
             this.setState({ hostname: content.trim() });
         });
@@ -60,23 +59,32 @@ export class Application extends React.Component {
     }
 
     handleRunRegenerateScript = function () {
-        toggleButtons(false); // we'll declare the button toggle before the file creation to avoid people clicking twice...
-        dbus_client.wait(function () {
-            dbus_client.call("/fr/calvinballconsortium/runner", "fr.calvinballconsortium.interface", "run", ["regen"]);
+        const promise = cockpit.user();
+        promise.then(user => {
+            toggleButtons(false); // we'll declare the button toggle before the file creation to avoid people clicking twice...
+            dbus_client.wait(function () {
+                dbus_client.call("/fr/calvinballconsortium/runner", "fr.calvinballconsortium.interface", "run", ["regen", user.name]);
+            });
         });
     }
 
     handleRunRebuildScript = function () {
-        toggleButtons(false); // we'll declare the button toggle before the file creation to avoid people clicking twice...
-        dbus_client.wait(function () {
-            dbus_client.call("/fr/calvinballconsortium/runner", "fr.calvinballconsortium.interface", "run", ["rebuild"]);
+        const promise = cockpit.user();
+        promise.then(user => {
+            toggleButtons(false); // we'll declare the button toggle before the file creation to avoid people clicking twice...
+            dbus_client.wait(function () {
+                dbus_client.call("/fr/calvinballconsortium/runner", "fr.calvinballconsortium.interface", "run", ["rebuild", user.name]);
+            });
         });
     }
 
     handleRunDevScript = function () {
-        toggleButtons(false); // we'll declare the button toggle before the file creation to avoid people clicking twice...
-        dbus_client.wait(function () {
-            dbus_client.call("/fr/calvinballconsortium/runner", "fr.calvinballconsortium.interface", "run", ["dev"]);
+        const promise = cockpit.user();
+        promise.then(user => {
+            toggleButtons(false); // we'll declare the button toggle before the file creation to avoid people clicking twice...
+            dbus_client.wait(function () {
+                dbus_client.call("/fr/calvinballconsortium/runner", "fr.calvinballconsortium.interface", "run", ["dev", user.name]);
+            });
         });
     }
 
