@@ -28,9 +28,11 @@ const toggleButtons = function (enable) {
     const button_regen = document.getElementById("regen");
     const button_rebuild = document.getElementById("rebuild");
     const button_dev = document.getElementById("dev");
+    const button_localserve = document.getElementById("localserve");
     button_regen.disabled = !enable;
     button_rebuild.disabled = !enable;
     button_dev.disabled = !enable;
+    button_localserve.disabled = !enable;
 };
 
 export class Application extends React.Component {
@@ -40,7 +42,8 @@ export class Application extends React.Component {
         cockpit.file('/etc/hostname').watch(content => {
             this.setState({ hostname: content.trim() });
         });
-        cockpit.file('/opt/calvinballconsortium/podcast_resources.log').watch(content => {
+        cockpit.file('/opt/calvinball-website/podcast_resources.log').watch(content => {
+            console.log(content);
             this.setState({ log: content });
         });
         const watch_lock = function (content, tag) {
@@ -88,16 +91,28 @@ export class Application extends React.Component {
         });
     }
 
+    handleRunLocalserveScript = function () {
+        const promise = cockpit.user();
+        promise.then(user => {
+            toggleButtons(false); // we'll declare the button toggle before the file creation to avoid people clicking twice...
+            dbus_client.wait(function () {
+                dbus_client.call("/fr/calvinballconsortium/runner", "fr.calvinballconsortium.interface", "run", ["localserve", user.name]);
+            });
+        });
+    }
+
     handleHoverRegen = function () {
         const regen_info = document.getElementById("regen-info");
         const rebuild_info = document.getElementById("rebuild-info");
         const dev_info = document.getElementById("dev-info");
         const blank_info = document.getElementById("blank-info");
+        const localserve_info = document.getElementById("localserve-info");
 
         regen_info.style.display = "block";
         rebuild_info.style.display = "none";
         dev_info.style.display = "none";
         blank_info.style.display = "none";
+        localserve_info.style.display = "none";
     }
 
     handleHoverRebuild = function () {
@@ -105,11 +120,13 @@ export class Application extends React.Component {
         const rebuild_info = document.getElementById("rebuild-info");
         const dev_info = document.getElementById("dev-info");
         const blank_info = document.getElementById("blank-info");
+        const localserve_info = document.getElementById("localserve-info");
 
         regen_info.style.display = "none";
         rebuild_info.style.display = "block";
         dev_info.style.display = "none";
         blank_info.style.display = "none";
+        localserve_info.style.display = "none";
     }
 
     handleHoverDev = function () {
@@ -117,11 +134,27 @@ export class Application extends React.Component {
         const rebuild_info = document.getElementById("rebuild-info");
         const dev_info = document.getElementById("dev-info");
         const blank_info = document.getElementById("blank-info");
+        const localserve_info = document.getElementById("localserve-info");
 
         regen_info.style.display = "none";
         rebuild_info.style.display = "none";
         dev_info.style.display = "block";
         blank_info.style.display = "none";
+        localserve_info.style.display = "none";
+    }
+
+    handleHoverLocalserve = function () {
+        const regen_info = document.getElementById("regen-info");
+        const rebuild_info = document.getElementById("rebuild-info");
+        const dev_info = document.getElementById("dev-info");
+        const blank_info = document.getElementById("blank-info");
+        const localserve_info = document.getElementById("localserve-info");
+
+        regen_info.style.display = "none";
+        rebuild_info.style.display = "none";
+        dev_info.style.display = "none";
+        blank_info.style.display = "none";
+        localserve_info.style.display = "block";
     }
 
     handleHoverOut = function () {
@@ -158,6 +191,9 @@ export class Application extends React.Component {
                             </button>
                             <button id="dev" className="btn" onMouseOut={this.handleHoverOut} onMouseOver={this.handleHoverDev} onClick={this.handleRunDevScript}>
                                 Mettre à jour le site de test
+                            </button>
+                            <button id="localserve" className="btn" onMouseOut={this.handleHoverOut} onMouseOver={this.handleHoverLocalserve} onClick={this.handleRunLocalserveScript}>
+                                Mettre à jour le site sur VM de développement
                             </button>
                         </div>
                         <div>
@@ -229,6 +265,17 @@ export class Application extends React.Component {
                                     </p>
                                 </ul>
                             </div>
+                            <div id="localserve-info" className="buttonDescription">
+                                <div className="title-info">
+                                    Mettre à jour le site sur VM de développement
+                                </div>
+                                <ul>
+                                    <li>
+                                        🧪 Compile le site avec l'option --localserve pour un usage de développement/debugging. Exclusif à l'environnement de développement en machine virtuelle.
+                                    </li>
+                                </ul>
+                            </div>
+
                         </div>
                     </div>
                     <div className="next-updates">
