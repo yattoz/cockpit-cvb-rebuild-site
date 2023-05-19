@@ -40,14 +40,14 @@ export class Application extends React.Component {
         cockpit.file('/etc/hostname').watch(content => {
             this.setState({ hostname: content.trim() });
         });
-        cockpit.file('/home/yattoz/calvinball-website/podcast_resources.log').watch(content => {
+        cockpit.file('/opt/calvinballconsortium/podcast_resources.log').watch(content => {
             this.setState({ log: content });
         });
         const watch_lock = function (content, tag) {
             toggleButtons(tag === "-");
         };
-        cockpit.file("/home/yattoz/calvinball-website/generation_token/.lock").watch(watch_lock, { read: false });
-        cockpit.file("/home/yattoz/calvinball-website/next_schedule.log").watch((content, tag) => {
+        cockpit.file("/opt/calvinball-website/generation_token/.lock").watch(watch_lock, { read: false });
+        cockpit.file("/opt/calvinball-website/next_schedule.log").watch((content, tag) => {
             // note: running at -l as podcaster doesn't output scheduled jobs for user yattoz. So we read the file instead.
             this.setState({ at_schedule_str: content });
             console.log(content.split("\n"));
@@ -55,7 +55,7 @@ export class Application extends React.Component {
     }
 
     handleDummy = function () {
-        cockpit.script("echo \"$(date)\" >> /home/yattoz/calvinball-website/podcast_resources.log");
+        cockpit.script("echo \"$(date)\" >> /opt/calvinball-website/podcast_resources.log");
     }
 
     handleRunRegenerateScript = function () {
