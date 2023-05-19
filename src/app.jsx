@@ -43,7 +43,6 @@ export class Application extends React.Component {
             this.setState({ hostname: content.trim() });
         });
         cockpit.file('/opt/calvinball-website/podcast_resources.log').watch(content => {
-            console.log(content);
             this.setState({ log: content });
         });
         const watch_lock = function (content, tag) {
