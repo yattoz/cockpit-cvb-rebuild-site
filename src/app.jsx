@@ -40,7 +40,7 @@ export class Application extends React.Component {
         cockpit.file('/etc/hostname').watch(content => {
             this.setState({ hostname: content.trim() });
         });
-        cockpit.file('/opt/calvinballconsortium/podcast_resources.log').watch(content => {
+        cockpit.file('/opt/calvinball-website/podcast_resources.log').watch(content => {
             this.setState({ log: content });
         });
         const watch_lock = function (content, tag) {
