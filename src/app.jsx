@@ -43,6 +43,9 @@ export class Application extends React.Component {
         cockpit.file('/opt/calvinball-website/podcast_resources.log').watch(content => {
             this.setState({ log: content });
         });
+        cockpit.file('/opt/calvinball-website/podcast_resources.err').watch(content => {
+            this.setState({ log_err: content });
+        });
         const watch_lock = function (content, tag) {
             toggleButtons(tag === "-");
         };
@@ -245,6 +248,16 @@ export class Application extends React.Component {
                     <div>
                         <pre>
                             {this.state.log}
+                        </pre>
+                    </div>
+                    <div>
+                        <span className="title-info">
+                            Erreurs
+                        </span>
+                    </div>
+                    <div className="box-error">
+                        <pre>
+                            {this.state.log_err}
                         </pre>
                     </div>
                 </CardBody>
